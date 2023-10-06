@@ -7,6 +7,7 @@ import './DashboardPage.scss'
 import { TEXTS } from 'src/resources/texts'
 import ArrivalByTimeChart from './ArrivalByTimeChart/ArrivalByTimeChart'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DateValidationError } from '@mui/x-date-pickers'
 import moment, { Moment } from 'moment'
 import LinesHbarChart from './LineHbarChart/LinesHbarChart'
 import { FormControlLabel, Switch } from '@mui/material'
@@ -25,10 +26,14 @@ function useDate(initialValue: Moment) {
   return [date, onChange] as const
 }
 
+const firstAvailableDateToPick: Moment = moment('20100101', 'YYYYMMDD')
+const lastAvailableDateToPick: Moment = now
+
 const DashboardPage = () => {
   const [startDate, setStartDate] = useDate(now.clone().subtract(7, 'days'))
   const [endDate, setEndDate] = useDate(now.clone().subtract(1, 'day'))
   const [groupByHour, setGroupByHour] = React.useState<boolean>(false)
+  const [datePickerError, setDatePickerError] = React.useState<DateValidationError | null>(null)
 
   const [operatorId, setOperatorId] = useState('')
   const groupByOperatorData = useGroupBy({
@@ -70,21 +75,53 @@ const DashboardPage = () => {
     gtfs_route_hour: item.gtfs_route_hour,
   }))
 
+  const datePickerErrorMessage = React.useMemo(() => {
+    switch (datePickerError) {
+      case 'maxDate':
+      case 'minDate': {
+        return 'נא לבחור תאריך בטווח מה-01.01.2010 עד היום'
+      }
+
+      case 'invalidDate': {
+        return 'נא להזין תאריך בפורמט תקין'
+      }
+
+      default: {
+        return ''
+      }
+    }
+  }, [datePickerError])
+
   return (
     <PageContainer>
       <div className="date-picker-container">
         <DatePicker
           value={startDate}
           onChange={(data) => setStartDate(data)}
+          onError={(newError) => setDatePickerError(newError)}
           format="DD/MM/YYYY"
           label={TEXTS.start}
+          slotProps={{
+            textField: {
+              helperText: datePickerErrorMessage,
+            },
+          }}
+          minDate={firstAvailableDateToPick}
+          maxDate={lastAvailableDateToPick}
         />
-        -
         <DatePicker
           value={endDate}
           onChange={(data) => setEndDate(data)}
+          onError={(newError) => setDatePickerError(newError)}
           format="DD/MM/YYYY"
           label={TEXTS.end}
+          slotProps={{
+            textField: {
+              helperText: datePickerErrorMessage,
+            },
+          }}
+          minDate={firstAvailableDateToPick}
+          maxDate={lastAvailableDateToPick}
         />
         <FormControlLabel
           control={
