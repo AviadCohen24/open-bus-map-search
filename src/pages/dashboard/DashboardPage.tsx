@@ -75,7 +75,7 @@ const DashboardPage = () => {
     gtfs_route_hour: item.gtfs_route_hour,
   }))
 
-  const datePickerErrorMessage = React.useMemo(() => {
+  const datePickerErrorMessage = (() => {
     switch (datePickerError) {
       case 'maxDate':
       case 'minDate': {
@@ -90,7 +90,7 @@ const DashboardPage = () => {
         return ''
       }
     }
-  }, [datePickerError])
+  })()
 
   return (
     <PageContainer>
