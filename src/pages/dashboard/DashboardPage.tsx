@@ -75,7 +75,7 @@ const DashboardPage = () => {
     gtfs_route_hour: item.gtfs_route_hour,
   }))
 
-  const datePickerErrorMessage = (() => {
+  const datePickerErrorMessage = () => {
     switch (datePickerError) {
       case 'maxDate':
       case 'minDate': {
@@ -90,7 +90,7 @@ const DashboardPage = () => {
         return ''
       }
     }
-  })()
+  }
 
   return (
     <PageContainer>
@@ -103,7 +103,7 @@ const DashboardPage = () => {
           label={TEXTS.start}
           slotProps={{
             textField: {
-              helperText: datePickerErrorMessage,
+              helperText: datePickerErrorMessage(),
             },
           }}
           minDate={firstAvailableDateToPick}
