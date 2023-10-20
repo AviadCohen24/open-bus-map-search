@@ -75,22 +75,12 @@ const DashboardPage = () => {
     gtfs_route_hour: item.gtfs_route_hour,
   }))
 
-  const datePickerErrorMessage = () => {
-    switch (datePickerError) {
-      case 'maxDate':
-      case 'minDate': {
-        return 'נא לבחור תאריך בטווח מה-01.01.2010 עד היום'
-      }
-
-      case 'invalidDate': {
-        return 'נא להזין תאריך בפורמט תקין'
-      }
-
-      default: {
-        return ''
-      }
-    }
-  }
+  const datePickerErrorMessage = {
+    maxDate: 'נא לבחור תאריך שאינו עתידי',
+    minDate: 'נא לבחור תאריך בטווח מה-01.01.2010 עד היום',
+    invalidDate: 'נא להזין תאריך בפורמט תקין',
+    default: 'שגיאה לא ידועה',
+  }[String(datePickerError)]
 
   return (
     <PageContainer>
@@ -103,7 +93,7 @@ const DashboardPage = () => {
           label={TEXTS.start}
           slotProps={{
             textField: {
-              helperText: datePickerErrorMessage(),
+              helperText: datePickerErrorMessage,
             },
           }}
           minDate={firstAvailableDateToPick}
